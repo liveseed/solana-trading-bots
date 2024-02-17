@@ -1,10 +1,8 @@
-// const Moralis = require("moralis").default;
-// const { axios } = require("@pipedream/platform");
+
 const axios = require('axios').default
 const { Telegraf } = require('telegraf')
 const web3 = require('@solana/web3.js')
-// const splToken = require('@solana/spl-token');
-// const tokenProvider = require('@solana/spl-token-registry');
+
 const metaPlex = require('@metaplex-foundation/js')
 const tgToken = '6883928470:AAHv9cpnjaVFjo5SqHBvbuvBpwRcndbRV0o'
 const rpcURL =
@@ -34,10 +32,6 @@ function checkValidate (address) {
     // Check Solana wallet validation.
     let pubKey = new web3.PublicKey(address)
 
-    // console.log(web3.PublicKey.isOnCurve(pubKey.toBytes()));
-    // console.log(web3.PublicKey.isOnCurve(pubKey.toString()));
-    // console.log(web3.PublicKey.isOnCurve(pubKey.toBuffer()));
-
     web3.PublicKey.isOnCurve(pubKey.toBuffer())
 
     return true
@@ -61,7 +55,7 @@ async function runScanning (address) {
     .then(response => response.json())
     .then(response => (solPrice = response.data.value))
     .catch(err => console.error(err))
-  // =========================================================================
+  
   let pubKey = new web3.PublicKey(address)
   let connection = new web3.Connection(rpcURL)
 
@@ -70,7 +64,7 @@ async function runScanning (address) {
   // Get latest 24 hours transactions
   const now = Math.round(new Date().getTime() / 1000)
   const before = now - 24 * 3600
-  //   console.log('time', now, before)
+  
 
   latestSigns = latestSigns.filter(
     each => each.blockTime && each.blockTime >= before
@@ -83,21 +77,6 @@ async function runScanning (address) {
   })
 
   let latestTxns = latestTxn1000
-
-  //   let latestTxns = latestTxn1000.slice(MIN, MAX)
-
-  // console.log(latestTxns);
-
-  // Get All token list including metadata using spl-token-registry
-  // let provider = new tokenProvider.TokenListProvider().resolve();
-  // let tokenList = (await provider).filterByChainId(tokenProvider.ENV.MainnetBeta).getList();
-
-  // const tokenMap = tokenList.reduce((map, item) => {
-  //     map.set(item.address, item);
-  //     return map;
-  //   }, new Map());
-  // let tokenInfo = tokenMap.get(address)
-  ///////////////////////////////////////////////
 
   let replyText = ' ------------ PNL Calculation ---- \n'
 
@@ -114,8 +93,6 @@ async function runScanning (address) {
     let detailed = await connection.getParsedTransaction(each_signature, {
       maxSupportedTransactionVersion: 0
     })
-
-    // console.log(detailed, "= Detailed ==");
 
     // Calculate SOL differences
     let preBalances = detailed.meta.preBalances
@@ -156,12 +133,6 @@ async function runScanning (address) {
     let postTokenBalances = detailed.meta.postTokenBalances.map(item => {
       return item
     })
-
-    // console.log(postTokenBalances);
-    // console.log("--------------");
-    // console.log(preTokenBalances);
-    // console.log("!!!!!!!!!!!!!!!");
-    // console.log("#########", postTokenBalances.length, preTokenBalances.length);
 
     let lengthDiff = postTokenBalances.length - preTokenBalances.length
 
